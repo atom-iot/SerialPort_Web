@@ -10,4 +10,4 @@ connect.addEventListener
 readLoop()
 
 ## Send messag
-async write(data)
+clickSend()

@@ -27,7 +27,7 @@
   <input id="sendText" style="width: 300px; margin-right: 10px;" type="text" />
   <input id="sendButton" type="button" value="send" /><br />
   <hr/>
-  <textarea style="width: 99%; height: 200px;" readonly id="receiveText" ></textarea>
+  <textarea style="width: 99%; min-height: 100px; min-width: 99%; max-width: 99%;" readonly id="receiveText" ></textarea>
 
   <script>
     "use strict";
@@ -50,7 +50,6 @@
             if ('serial' in navigator) {
                 try {
                     const port = await navigator.serial.requestPort();
-                    //await port.open({ baudRate: 9600 });
                     await port.open({ baudRate: BaudRate_Select });
 
                     this.reader = port.readable.getReader();

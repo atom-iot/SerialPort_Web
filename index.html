@@ -6,19 +6,38 @@
   <title>Serial Port Web</title>
 </head>
 <body>
+  
+  <strong>
+  Example Script - Serial Port ( <a href="https://github.com/atom-iot/SerialPort_Web">https://github.com/atom-iot/SerialPort_Web )</a><br/>
+  Navigator.Serial  ( <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator">https://developer.mozilla.org/en-US/docs/Web/API/Navigator</a> ) 
+  </strong>
+  <hr/>
 
-  <span style="padding-right: 10px;">Serial Port Web</span><button class="btn" id="connect-to-serial">Connect with Serial Device</button>
-  <input id="sendText" style="width: 300px; margin-right: 10px;" type="text" /><input id="sendButton" type="button" value="send" /><br />
+  <span style="padding-right: 10px;">Serial Port Web</span>
+  <select id="BaudRate">
+    <option selected value="9600">9600</option>
+    <option value="19200">19200</option>
+    <option value="38400">38400</option>
+    <option value="57600">57600</option>
+    <option value="74880">74880</option>
+    <option value="74880">74880</option>
+  </select>
+  <button class="btn" id="connect-to-serial">Connect with Serial Device</button>
+
+  <input id="sendText" style="width: 300px; margin-right: 10px;" type="text" />
+  <input id="sendButton" type="button" value="send" /><br />
   <hr/>
   <textarea style="width: 99%; height: 200px;" readonly id="receiveText" ></textarea>
 
   <script>
     "use strict";
     let outputStream, inputStream, port, serialReader;
+    let Disconnect = document.getElementById("disconnect-to-serial");
 
     let receiveText = document.getElementById("receiveText");
     let sendText = document.getElementById("sendText");
     let sendButton = document.getElementById("sendButton");
+    let BaudRate_Select = document.getElementById("BaudRate").value;
     sendButton.addEventListener("click", clickSend)
 
 
@@ -31,7 +50,8 @@
             if ('serial' in navigator) {
                 try {
                     const port = await navigator.serial.requestPort();
-                    await port.open({ baudRate: 9600 });
+                    //await port.open({ baudRate: 9600 });
+                    await port.open({ baudRate: BaudRate_Select });
 
                     this.reader = port.readable.getReader();
                     this.writer = port.writable.getWriter();
@@ -39,7 +59,12 @@
                     let signals = await port.getSignals();
                     console.log(signals);
 
+                    console.log("BaudRate_Select:" + BaudRate_Select); // 
+                    document.getElementById("BaudRate").setAttribute("disabled","disabled");
+                    document.getElementById("connect-to-serial").setAttribute("disabled","disabled");
+
                     readLoop();
+
                 }
                 catch (err) {
                     console.error('There was an error opening the serial port:', err);
@@ -68,6 +93,7 @@
           const dataArrayBuffer = this.encoder.encode(data);
           return await this.writer.write(dataArrayBuffer);
         }
+     
         
     }
 
@@ -84,7 +110,7 @@
         while (true) {
           receiveText.value += await serialScaleController.read();
           receiveText.scrollTop = receiveText.scrollHeight;
-      }
+        }
     }
 
     function clickSend() {

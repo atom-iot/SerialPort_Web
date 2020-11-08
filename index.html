@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serial Port Web</title>
+</head>
+<body>
+
+  <span style="padding-right: 10px;">Serial Port Web</span><button class="btn" id="connect-to-serial">Connect with Serial Device</button>
+  <input id="sendText" style="width: 300px; margin-right: 10px;" type="text" /><input id="sendButton" type="button" value="send" /><br />
+  <hr/>
+  <textarea style="width: 99%; height: 200px;" readonly id="receiveText" ></textarea>
+
+  <script>
+    "use strict";
+    let outputStream, inputStream, port, serialReader;
+
+    let receiveText = document.getElementById("receiveText");
+    let sendText = document.getElementById("sendText");
+    let sendButton = document.getElementById("sendButton");
+    sendButton.addEventListener("click", clickSend)
+
+
+    class SerialScaleController {
+        constructor() {
+            this.encoder = new TextEncoder();
+            this.decoder = new TextDecoder();
+        }
+        async init() {
+            if ('serial' in navigator) {
+                try {
+                    const port = await navigator.serial.requestPort();
+                    await port.open({ baudRate: 9600 });
+
+                    this.reader = port.readable.getReader();
+                    this.writer = port.writable.getWriter();
+
+                    let signals = await port.getSignals();
+                    console.log(signals);
+
+                    readLoop();
+                }
+                catch (err) {
+                    console.error('There was an error opening the serial port:', err);
+                }
+            }
+            else {
+                console.error('Web serial doesn\'t seem to be enabled in your browser. Try enabling it by visiting:');
+                console.error('chrome://flags/#enable-experimental-web-platform-features');
+                console.error('opera://flags/#enable-experimental-web-platform-features');
+                console.error('edge://flags/#enable-experimental-web-platform-features');
+            }
+        }
+        async read() {
+            try {
+                const readerData = await this.reader.read();
+                console.log(readerData)
+                return this.decoder.decode(readerData.value);
+            }
+            catch (err) {
+                const errorMessage = `error reading data: ${err}`;
+                console.error(errorMessage);
+                return errorMessage;
+            }
+        }
+        async write(data) {
+          const dataArrayBuffer = this.encoder.encode(data);
+          return await this.writer.write(dataArrayBuffer);
+        }
+        
+    }
+
+    const serialScaleController = new SerialScaleController();
+    const connect = document.getElementById('connect-to-serial');
+   
+
+    connect.addEventListener('pointerdown', () => {
+      serialScaleController.init();
+    });
+
+ 
+    async function readLoop() {
+        while (true) {
+          receiveText.value += await serialScaleController.read();
+          receiveText.scrollTop = receiveText.scrollHeight;
+      }
+    }
+
+    function clickSend() {
+        serialScaleController.write(sendText.value + '\n');
+        sendText.value = "";
+    }
+
+
+  </script>
+</body>
+</html>

@@ -37,7 +37,7 @@
     let receiveText = document.getElementById("receiveText");
     let sendText = document.getElementById("sendText");
     let sendButton = document.getElementById("sendButton");
-    let BaudRate_Select = document.getElementById("BaudRate").value;
+    let BaudRate_Select = 0;
     sendButton.addEventListener("click", clickSend)
 
 
@@ -68,6 +68,7 @@
                 }
                 catch (err) {
                     console.error('There was an error opening the serial port:', err);
+                    alert('There was an error opening the serial port:' + err);
                 }
             }
             else {
@@ -75,6 +76,13 @@
                 console.error('chrome://flags/#enable-experimental-web-platform-features');
                 console.error('opera://flags/#enable-experimental-web-platform-features');
                 console.error('edge://flags/#enable-experimental-web-platform-features');
+
+                var messageErr = 'Web serial doesn\'t seem to be enabled in your browser. Try enabling it by visiting:';
+                messageErr += 'chrome://flags/#enable-experimental-web-platform-features , ';
+                messageErr += 'opera://flags/#enable-experimental-web-platform-features , ';
+                messageErr += 'edge://flags/#enable-experimental-web-platform-features ';
+
+                alert(messageErr);
             }
         }
         async read() {
@@ -86,6 +94,7 @@
             catch (err) {
                 const errorMessage = `error reading data: ${err}`;
                 console.error(errorMessage);
+                alert('error reading data:' + err);
                 return errorMessage;
             }
         }
@@ -102,6 +111,7 @@
    
 
     connect.addEventListener('pointerdown', () => {
+      BaudRate_Select = document.getElementById("BaudRate").value;
       serialScaleController.init();
     });
 

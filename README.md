@@ -1,4 +1,5 @@
 # SerialPort_Web
+demo page atom-iot.ru/iot_projects/serialport_web/
 
 ## Select Baud Rate 
 await port.open({ baudRate: 9600 });

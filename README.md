@@ -1,7 +1,7 @@
 # SerialPort_Web
-demo page https://atom-iot.ru/iot_projects/serialport_web/
+## Demo Page https://atom-iot.ru/iot_projects/serialport_web/
 
-## INFO https://wicg.github.io/serial/
+## Info API https://wicg.github.io/serial/
 
 Web serial doesn\'t seem to be enabled in your browser. Try enabling it by visiting ?
 - chrome://flags/#enable-experimental-web-platform-features

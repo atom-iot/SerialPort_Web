@@ -4,6 +4,7 @@
 ## Info API https://wicg.github.io/serial/
 
 Web serial doesn\'t seem to be enabled in your browser? 
+
 Try enabling it by visiting:
 - chrome://flags/#enable-experimental-web-platform-features
 
